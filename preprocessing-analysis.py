@@ -18,6 +18,18 @@ import numpy as np
 stop_words = set(stopwords.words('german'))
 punctuation = set(string.punctuation)
 
+# Custom domain-specific stopwords
+def load_custom_stopwords(file_path):
+    with open(file_path, 'r', encoding='utf-8') as f:
+        words = [line.strip() for line in f if line.strip()]
+    words_extended = set()
+    for word in words:
+        words_extended.add(word.lower())
+        words_extended.add(word.capitalize())
+    return words_extended
+
+custom_stopwords = load_custom_stopwords("custom_stopwords.txt")
+
 # Load German spaCy model
 nlp = spacy.load("de_core_news_sm")
 
@@ -34,9 +46,11 @@ def preprocess(text):
     # Use spaCy to tokenize and lemmatize
     doc = nlp(text)
     tokens = [
-        token.lemma_ for token in doc
+        token.lemma_.lower()
+        for token in doc
         if token.is_alpha  # Only alphabetic tokens
            and not token.is_stop  # Remove stopwords
+           and token.lemma_.lower() not in custom_stopwords  # Remove custom stopwords
            and len(token) > 2  # Remove short tokens
     ]
     return tokens
