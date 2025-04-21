@@ -28,7 +28,12 @@ def load_custom_stopwords(file_path):
         words_extended.add(word.capitalize())
     return words_extended
 
+def load_name_list(filepath):
+    with open(filepath, "r", encoding="utf-8") as f:
+        return set(line.strip().lower() for line in f if line.strip())
+
 custom_stopwords = load_custom_stopwords("custom_stopwords.txt")
+static_name_list = load_custom_stopwords("german_names.txt")
 
 # Load German spaCy model
 nlp = spacy.load("de_core_news_sm")
@@ -45,12 +50,15 @@ def preprocess(text):
 
     # Use spaCy to tokenize and lemmatize
     doc = nlp(text)
+    person_names = set(ent.text.lower() for ent in doc.ents if ent.label_ in ("PER", "PERSON"))
     tokens = [
         token.lemma_.lower()
         for token in doc
         if token.is_alpha  # Only alphabetic tokens
            and not token.is_stop  # Remove stopwords
            and token.lemma_.lower() not in custom_stopwords  # Remove custom stopwords
+           and token.lemma_.lower() not in person_names
+           and token.lemma_.lower() not in static_name_list
            and len(token) > 2  # Remove short tokens
     ]
     return tokens
