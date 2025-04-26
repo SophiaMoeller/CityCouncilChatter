@@ -1,7 +1,9 @@
-requests~=2.32.3
-beautifulsoup4~=4.13.4
+scikit-learn~=1.6.1
+gensim~=4.3.3
 nltk~=3.9.1
 spacy~=3.8.5
 pandas~=2.2.3
-numpy~=2.2.4
-scikit-learn~=1.6.1
+requests~=2.32.3
+beautifulsoup4~=4.13.4
+numpy~=1.26.4
+bertopic~=0.17.0
